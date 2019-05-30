@@ -1,4 +1,4 @@
-## Welcome to GitHub Pages
+## Bioinformatics Courses on Edu.T-Bio.Info
 
 You can use the [editor on GitHub](https://github.com/PineBiotech/bioinformatics/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
 
