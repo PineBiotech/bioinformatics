@@ -1,8 +1,6 @@
 ## Bioinformatics Courses on Edu.T-Bio.Info
 
-You can use the [editor on GitHub](https://github.com/PineBiotech/bioinformatics/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
-
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+Our courses are found on [Link](edu.t-bio.info)
 
 ### Markdown
 
