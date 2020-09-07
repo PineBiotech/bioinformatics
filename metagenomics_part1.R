@@ -1,5 +1,3 @@
-#Test your R code here
-
 library(openxlsx)
 library(dplyr)
 
@@ -13,18 +11,23 @@ numtable1 <- na.omit(numtable1)
 totalsum <- sum(numtable1)
 numtable2 <- lapply(numtable1[,1], function(x) { x/totalsum })
 numtable2 <- lapply(numtable2, function(x) { round(x*100, digits=2)})
-
+#numtable2 <- lapply(numtable2, function(x) { paste(x, " %")})
 
 #add labels and count length
 labels <- row.names(numtable1)
 colnum <- length(labels)
 colorfill <- factor(c(labels))
-numtable2 <- lapply(numtable2, function(x) { paste(colorfill[x], x, " %")})
+list1 <- Map(c, labels, numtable2) 
+
+#list1 <- as.data.frame(list1)
+prop.table(numtable1)
 
 #make a pie chart
-par(mar=c(4,4,4,4))
+par(mar=c(4,8,4,4))
 par(xpd=TRUE)
-pie(table(annotatedtb[,1]), col = rainbow(colnum), radius = 01, main="ERR1250035 by Phylum", c(numtable2), cex = 0.6)
-legend(-2,1,labels,c(rainbow(colnum)), cex = 0.5)
+
+pie(numtable1, col = rainbow(colnum), radius = 01, main="ERR1250035 by Phylum", labels=sprintf("%.2f%%", prop.table(numtable1)*100), cex=0.6)
+#pie(list1, col = rainbow(colnum), radius = 01, main="ERR1250035 by Phylum", c(list1[,1]), cex = 0.6)
+legend(-2,1,list1,c(rainbow(colnum)), cex = 0.5)
 par(mar=c(6,4,4,4))
 barplot(table(annotatedtb[,1]), col = rainbow(colnum), main="ERR1250035 by Phylum", xlab = "Bacteria Type", las = 2, cex.names = 0.5)
