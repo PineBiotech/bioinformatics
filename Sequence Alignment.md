@@ -70,16 +70,16 @@ Often times, sequences are hard to analyze because they can consist of 10s, 100s
 
 ## Pairwise Alignment
 
-To illustrate this idea, let's align one sequence to another and see how similar they are. Let's imagine 3 sequnces in this case, 2 that are fairly similar (length is 72 and 77 bp) and another one that is much shorter (20 bp), so it has a similar segment, but overall the sequence is very different. First, let's align the similar sequences :
+To illustrate this idea, let's align one sequence to another and see how similar they are. Let's imagine 3 sequences in this case, 2 that are fairly similar (length is 72 and 77 bp) and another one that is much shorter (20 bp), so it has a similar segment, but overall the sequence is very different. First, let's align the similar sequences :
 
 ```R
 library(DECIPHER)
 library(Biostrings)
 
 #load data as a DNA string
-Patient1 <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT")
-Patient2 <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAGATGCAATGCCCTTGTATATATATGTGATTTAC")
-Patient3 <- DNAString("CAAAGCGGTCCATGAGATGC")
+DNASeq1 <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT")
+DNASeq2 <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAGATGCAATGCCCTTGTATATATATGTGATTTAC")
+DNASeq3 <- DNAString("CAAAGCGGTCCATGAGATGC")
 
 myAlign <- pairwiseAlignment(Patient1, Patient2)
 print(myAlign)
@@ -97,7 +97,7 @@ The result of this code will look like this:
 What if we compare the long and the short sequences?
 
 ```r
-myAlign <- pairwiseAlignment(Patient1, Patient3)
+myAlign <- pairwiseAlignment(DNASeq1, DNASeq3)
 print(myAlign)
 ```
 
@@ -111,7 +111,7 @@ Now we will get the following:
 > score: -206.2459 
 ```
 
-You can see that by default the alignment is global - one that tries to align the whole sequnece as mucha s possible by introducing gaps inbetween and at the ends of the whol sequence. There are additional alignment types, including global, local and overlap. Local alignment will seek to keep only the parts that algign, for example:
+By default the alignment is **global** - one that tries to align the whole sequence as much as possible by introducing gaps in-between and at the ends of the whole sequence. There are additional alignment types, including **local** and **overlap**. Local alignment will seek to keep only the parts that align, for example:
 
 ```r
 localAlign <- pairwiseAlignment(Patient1, Patient3, type = "local")
@@ -128,10 +128,10 @@ subject:  [1] CAAAGCGGTCCATGA
 score: 29.72634 
 ```
 
-For overlap, the alignment would be:
+To make an "overlapping" alignment, you would set the parameter to:
 
 ```R
-overlapAlign <- pairwiseAlignment(Patient1, Patient3, type = "overlap")
+overlapAlign <- pairwiseAlignment(DNASeq1, DNASeq3, type = "overlap")
 print(overlapAlign)
 ```
 
@@ -147,7 +147,7 @@ score: 23.65337
 
 ## Multiple Sequence Alignment:
 
-What if we wanted to align multiple sequences? IN this case, it would be cumbersome to try to align all pairs, so we turn to a method called "multiple sequnece alignment". This method can also be used to compare multiple long and short sequences to find matching portions, introduce gaps and find a consensus sequence. In order to perform multiple sequence alignment in R without runnin g the traditional algorithms like MUSCLE, we can use the DECIPHER package from bioconductor.
+What if we wanted to align multiple sequences? In this case, it would be cumbersome to try to align all pairs, so we turn to a method called "multiple sequence alignment". This method can also be used to compare multiple long and short sequences to find matching portions, introduce gaps and find a consensus sequence. In order to perform multiple sequence alignment in R without runnin g the traditional algorithms like MUSCLE, we can use the DECIPHER package from bioconductor.
 
 ```R
 library(DECIPHER)
@@ -180,7 +180,7 @@ as a result, you will get:
 [5]    78 ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGA--ATGCAATGCCCTTGTATATATATGTGAT----
 ```
 
-You can also save the output as a FASTA file using the function `writeXStringSe()` and visualize the alignment using `BrowseSeqs()`
+You can also save the output as a FASTA file using the function `writeXStringSet()` and visualize the alignment using `BrowseSeqs()`
 
 ```R
 # view the alignment in a browser (optional)
@@ -193,20 +193,33 @@ TF <- BrowseSeqs(aligned, highlight=0, htmlFile = TF)
 file.copy(TF, './')
 ```
 
-Read more about the DECIPHER package for multiple sequnce alignment here: https://rdrr.io/bioc/DECIPHER/f/inst/doc/ArtOfAlignmentInR.pdf
+Read more about the DECIPHER package for multiple sequence alignment here: https://rdrr.io/bioc/DECIPHER/f/inst/doc/ArtOfAlignmentInR.pdf
 
-Try to run this full code:
+When dealing with many sequences, one would have to rely on external files where the sequences are stored in a `FASTA` format. This format includes the name of each string and the content of the string, like this:
+
+> DNASeq 1
+> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT
+
+The first line contains the ">" that means it is a name of a string or sequence element. To load sequences from the file, you can change the "seas" variable, like this:
+
+```R
+fas <- "myfasta.fasta"
+seqs <- readDNAStringSet(fas)
+```
+
+### TEST: Try to run this full code using a file input "myfasta.fasta"
+
+> HINT: the fasta file can be found in this link:
+>
+> https://raw.githubusercontent.com/PineBiotech/bioinformatics/master/myfasta.fasta
 
 ```R
 library(DECIPHER)
 
-# multiple sequence alignment
-Patient <- list()
-DNASeq[1] <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT")
-DNASeq[2] <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAGATGCAATGCCCTTGTATATATATGTGATTTAC")
-DNASeq[3] <- DNAString("ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGATAA")
+# LOAD the data here:
 
-seqs <- DNAStringSet(unlist(DNASeq))
+
+
 
 # perform the alignment
 aligned <- AlignSeqs(seqs)
@@ -226,31 +239,41 @@ file.copy(TF, './')
 
 # Assignment:
 
-Now it is time to test ywhat you have learned. In this activity you will modify a python script to detect mutant patients and determine the recommended medicine dosage for mutant and wild type patients
-In this exercise, we will solve the following case study based on the short lecture on pharmacogenomics and with the help of a python sequence alignment script.
+Now it is time to test what you have learned. In this activity, you will write an R script to make decisions about drug prescriptions. [CYP3A5](https://www.ncbi.nlm.nih.gov/gene/1577) is a gene that encodes a member of the cytochrome P450 superfamily of enzymes. The cytochrome P450 proteins are monooxygenases which catalyze many reactions involved in drug metabolism and synthesis of cholesterol, steroids and other lipids. The encoded protein metabolizes drugs as well as the steroid hormones testosterone and progesterone. **Tacrolimus** is a widely used immunosuppressive medication with a narrow therapeutic index and large between‐patient pharmacokinetic variability, which is partly because of genetic variations in *CYP3A5* ([source](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4481158/)). There are 2 phernotypes of CYP3A5 - expressers and non-expressers. The non-expressers have low metabolism of Tacrolimus and other immune-supressor drugs used in organ transplants. Here are some **mutations** found in CYP3A5 that lead to this condition (Variant alleles for *CYP3A5* (3, 6, or 7) may result in truncated mRNA with loss of expression of the functional protein in homozygotes or compound heterozygotes, or encode nonfunctional protein):
+
+| Allelea | Nucleotide variationb | dbSNP numberc           | Effect on CYP3A5 protein  |
+| ------- | --------------------- | ----------------------- | ------------------------- |
+| *1      |                       |                         |                           |
+| *2      | 27289G>T              | rs28365083              | T398N                     |
+| ***3**  | **6986T>C**           | **rs776746**            | **Splicing defect**       |
+| *4      | 14665T>C              | rs56411402              | Q200R                     |
+| *5      | 12952A>G              |                         | Splicing defect           |
+| ***6**  | **14690C>T**          | **rs10264272**          | **Splicing defect**       |
+| ***7**  | **27131_27132insA**   | **rs41303343**          | **346Frameshift**         |
+| *8      | 3699G>A               | rs55817950              | R28C                      |
+| *9      | 19386C>T  *6986T>C*d  | rs28383479  *rs776746*d | A337T  *Splicing defect*d |
+
 Below are the partial gene sequences of CYP3A5 gene from 5 different individuals -
 
 <u>Patient 1:</u> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT
 
 <u>Patient 2:</u> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAGATGCAATGCCCTTGTATATATATGTGATTTAC
 
-<u>Patient 3:</u> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGATAA
+<u>Patient 3:</u> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGA**A**TGCAATGCCCTTGTATATATATGTGATAA
 
 <u>Patient 4:</u> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAGTCTGCAATGCCCTTGTATATATATGTGAT
 
 <u>Patient 5:</u> ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT
 
-Here is the wild type sequence for this gene - ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT
+Here is the wild type sequence for this gene: ATTTTAAGTAGTTAAGCCAGTGCCCGATGCAAAGCGGTCCATGAATGCAATGCCCTTGTATATATATGTGAT
 
-The second A in the sequence GAATGC is the position 6986. This mutation/SNP is denoted as 6986 A>G.
-
-Consider that all 5 of these individuals are kidney transplant patients and their doctor needs to decide the dosage for immunosuppressant based on their genetic makeup. Here are the dosage guidelines from CPIC (Stanford Medical School):
+Consider that all 5 of these individuals are kidney transplant patients and their doctor needs to decide the dosage for immunosuppressant tacromilus based on their genetic makeup. Dosage guidelines from CPIC (Stanford Medical School):
 
 ![img](https://lh4.googleusercontent.com/ZJJ_eBCuXCE5LdLbZWnMZXchLr2XzAnW3I7kn5LKF6q7AReu__IpFN0nNBTp4KsEDYdIJDyS9UtbOG8oAM5UBX90iLPWypBEdqwQFkRrFogagnL7gwo1fSJO5udg62wucmwk__zi)![Figure](https://user-images.githubusercontent.com/71350730/93373096-7cae9d80-f872-11ea-9a75-35b8787eb24d.png)  
 
-\## Table : Dosage recommendation for Tacrolimus based on CYP3A5phenotype by CPIC (Stanford Medical School) [Sources link: https://cpicpgx.org/content/guideline/publication/tacrolimus/2015/25801146.pdf ].
+\## Table : Dosage recommendation for Tacrolimus based on CYP3A5 phenotype by CPIC (Stanford Medical School) [Sources link: https://cpicpgx.org/content/guideline/publication/tacrolimus/2015/25801146.pdf ].
 
-Submit your answer below:
+Write your code below. To check the answer, print out the sequence name using the `print()` function for the patient with a mutation that makes you consider this patient a non-expresser of CYP3A5 and likely a poor metabolizer of tacromilus:
 
 ```R
 #Submit your assignment here
